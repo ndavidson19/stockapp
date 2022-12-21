@@ -12,22 +12,25 @@ from torch.distributions import Categorical
 import gym
 
 
+
 class Policy(nn.Module):
     def __init__(self, s_size, a_size, h_size):
         super(Policy, self).__init__()
         self.fc1 = nn.Linear(s_size, h_size)
-        self.fc2 = nn.Linear(h_size, a_size)
+        self.fc2 = nn.Linear(h_size, h_size*2)
+        self.fc3 = nn.Linear(h_size*2, a_size)
 
     def forward(self, x):
         x = F.relu(self.fc1(x))
-        x = self.fc2(x)
+        x = F.relu(self.fc2(x))
+        x = self.fc3(x)
         return F.softmax(x, dim=1)
     
     def act(self, state):
         state = torch.from_numpy(state).float().unsqueeze(0).to(device)
         probs = self.forward(state).cpu()
         m = Categorical(probs)
-        action = np.argmax(m)
+        action = m.sample()
         return action.item(), m.log_prob(action)
 
 
@@ -103,3 +106,29 @@ def evaluate_agent(env, max_steps, n_eval_episodes, policy):
   std_reward = np.std(episode_rewards)
 
   return mean_reward, std_reward
+
+
+  '''
+  trading_hyperparameters = {
+    "h_size": 64,
+    "n_training_episodes": 20000,
+    "n_evaluation_episodes": 10,
+    "max_t": 5000,
+    "gamma": 0.99,
+    "lr": 1e-2,
+    "env_id": env_id,
+    "state_space": s_size,
+    "action_space": a_size,
+}
+
+
+trading_policy = Policy(pong_hyperparameters["state_space"], pong_hyperparameters["action_space"], pong_hyperparameters["h_size"]).to(device)
+trading_optimizer = optim.Adam(pong_policy.parameters(), lr=pong_hyperparameters["lr"])
+scores = reinforce(pong_policy,
+                   pong_optimizer,
+                   pong_hyperparameters["n_training_episodes"], 
+                   pong_hyperparameters["max_t"],
+                   pong_hyperparameters["gamma"], 
+                   1000)
+  
+  '''
