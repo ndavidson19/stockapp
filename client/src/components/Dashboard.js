@@ -4,6 +4,7 @@ import Overview from "./Overview";
 import Details from "./Details";
 import Chart from "./Chart";
 import Header from "./Header";
+import Sidebar from "./Sidebar";
 import StockContext from "../context/StockContext";
 import { fetchStockDetails, fetchQuote } from "../utils/api/stock-api";
 
@@ -50,8 +51,13 @@ const Dashboard = () => {
       <div className="col-span-1 md:col-span-2 xl:col-span-3 row-span-1 flex justify-start items-center">
         <Header name={stockDetails.name} />
       </div>
+
+
       <div className="md:col-span-2 row-span-4">
         <Chart />
+      </div>
+      <div className='sidebar'>
+        <Sidebar />
       </div>
       <div>
         <Overview
