@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+  background-color: #000300;
+}
+
 @layer components {
   .custom-scrollbar::-webkit-scrollbar {
     width: 4px;
