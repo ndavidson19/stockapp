@@ -5,8 +5,42 @@ from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
 from alpha_vantage.timeseries import TimeSeries 
 
+config = {
+    "alpha_vantage": {
+        "key": "COR04RQ1Z1P74ETF", 
+        "symbol": "SPY",
+        "outputsize": "full",
+        "key_adjusted_close": "5. adjusted close",
+    },
+    "data": {
+        "window_size": 20,
+        "train_split_size": 0.80,
+    }, 
+    "plots": {
+        "xticks_interval": 90, # show a date every 90 days
+        "color_actual": "#001f3f",
+        "color_train": "#3D9970",
+        "color_val": "#0074D9",
+        "color_pred_train": "#3D9970",
+        "color_pred_val": "#0074D9",
+        "color_pred_test": "#FF4136",
+    },
+    "model": {
+        "input_size": 1, # since we are only using 1 feature, close price
+        "num_lstm_layers": 5,
+        "lstm_size": 128,
+        "dropout": 0.2,
+    },
+    "training": {
+        "device": "cpu", # "cuda" or "cpu"
+        "batch_size": 64,
+        "num_epoch": 100,
+        "learning_rate": 0.01,
+        "scheduler_step_size": 40,
+    }
+}
 
-class DataPipeline(Dataset):
+class DataPipeline():
     def __init__(self, config):
         self.config = config
         self.data_date, self.data_close_price, self.num_data_points, self.display_date_range = self.download_data()
@@ -33,6 +67,46 @@ class DataPipeline(Dataset):
         print("Number data points", num_data_points, display_date_range)
 
         return data_date, data_close_price, num_data_points, display_date_range
+    def normalize(self):
+        data_close_price = self.data_close_price
+        # normalize
+        scaler = Normalizer()
+        normalized_data_close_price = scaler.fit_transform(data_close_price)
+        return normalized_data_close_price
+
+    def prepare_data_x(self):
+        config = self.config
+        normalized_data_close_price = self.normalized_data_close_price
+        window_size = config["data"]["window_size"]
+        data_x, data_x_unseen = DataCleaning().prepare_data_x(normalized_data_close_price, window_size)
+        return data_x, data_x_unseen
+    
+    def prepare_data_y(self):
+        config = self.config
+        normalized_data_close_price = self.normalized_data_close_price
+        window_size = config["data"]["window_size"]
+        data_y = DataCleaning().prepare_data_y(normalized_data_close_price, window_size)
+        return data_y
+    
+    def split_data(self):
+        config = self.config
+        data_x = self.data_x
+        data_y = self.data_y
+        train_split_size = config["data"]["train_split_size"]
+        data_x_train, data_x_val, data_y_train, data_y_val = DataCleaning().split_data(data_x, data_y, train_split_size)
+        return data_x_train, data_x_val, data_y_train, data_y_val
+    
+    def prepare_data_for_plotting(self):
+        config = self.config
+        data_y_train = self.data_y_train
+        data_y_val = self.data_y_val
+        to_plot_data_y_train = DataCleaning().prepare_data_for_plotting(data_y_train)
+        to_plot_data_y_val = DataCleaning().prepare_data_for_plotting(data_y_val)
+        return to_plot_data_y_train, to_plot_data_y_val
+    
+    def get_data(self):
+        return self.data_date, self.data_close_price, self.num_data_points, self.display_date_range, self.normalized_data_close_price, self.data_x, self.data_x_unseen, self.data_y, self.data_x_train, self.data_x_val, self.data_y_train, self.data_y_val, self.to_plot_data_y_train, self.to_plot_data_y_val
+    
 
 class Normalizer():
     def __init__(self):
@@ -104,14 +178,6 @@ class DataCleaning():
         self.data_y = self.prepare_data_y(normalized_data_close_price, window_size=config["data"]["window_size"])
         self.data_x_train, self.data_x_val, self.data_y_train, self.data_y_val = self.split_data(self.data_x, self.data_y, train_split_size=config["data"]["train_split_size"])
         self.to_plot_data_y_train, self.to_plot_data_y_val = self.prepare_data_for_plotting(num_data_points, self.data_y_train, self.data_y_val)
-
-
-data_cleaning = DataCleaning()
-
-data_cleaning.run(config, normalized_data_close_price)
-
-data_x, data_x_unseen, data_y, data_x_train, data_x_val, data_y_train, data_y_val, to_plot_data_y_train, to_plot_data_y_val = data_cleaning.get_data()
-
 class TimeSeriesDataset(Dataset):
     def __init__(self, x, y):
         x = np.expand_dims(x, 2) # in our case, we have only 1 feature, so we need to convert `x` into [batch, sequence, features] for LSTM
@@ -123,12 +189,5 @@ class TimeSeriesDataset(Dataset):
 
     def __getitem__(self, idx):
         return (self.x[idx], self.y[idx])
-
-dataset_train = TimeSeriesDataset(data_x_train, data_y_train)
-dataset_val = TimeSeriesDataset(data_x_val, data_y_val)
-
-train_dataloader = DataLoader(dataset_train, batch_size=config["training"]["batch_size"], shuffle=True)
-val_dataloader = DataLoader(dataset_val, batch_size=config["training"]["batch_size"], shuffle=True)
-
 
 
