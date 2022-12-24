@@ -16,4 +16,6 @@ class PolyReg():
         return np.polyval(self.model, X)
 
     def score(self, X, y):
-        return np.sum((self.predict(X) - y) ** 2
+        return np.sum((self.predict(X) - y) ** 2)
+
+
