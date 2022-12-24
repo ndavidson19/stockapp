@@ -1,4 +1,4 @@
-# React Tilt
+# NEXTGEN TRADING
 
 [![npm version][npm-badge]][npm-url]
 [![npm downloads][downloads-badge]][npm-url]
@@ -16,7 +16,7 @@
 [![CI][deploy-storybook-badge]][deploy-storybook-url]
 [![CI][npm-release-badge]][npm-release-url]
 
-_👀 Easily apply tilt hover effect on React components_
+_👀 Automated trading using AI_
 
 [![](misc/demo.gif)](https://mkosir.github.io/react-parallax-tilt/?path=/story/react-parallax-tilt--glare-effect)
 
