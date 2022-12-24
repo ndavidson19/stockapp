@@ -1,3 +1,15 @@
+import os
+import sys
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+from .ensemble import EnsembleModel
+from .nnet import NeuralNetwork
+from .ppo import RLAgent
+from .data_pipeline import DataPipeline
+
+# load in the data
 
 
 # Define the ensemble model architecture and hyperparameters
@@ -10,7 +22,7 @@ ensemble_model.fit(X_train, y_train)
 neural_network = NeuralNetwork(...)
 
 # Set up the RL algorithm
-rl_algorithm = RLAlgorithm(...)
+rl_algorithm = RLAgent(...)
 
 # Train the RL agent using the neural network to guide the reward
 for t in range(T):

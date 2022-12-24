@@ -1,8 +1,14 @@
+from .arima import ARIMA
+from .lstm import LSTM
+from .xgboost import XGBOOST
+from .svm import SVM
+from .fourier import Fourier
+from .polynomial_regression import PolyReg
 
 
 class EnsembleModel:
   def __init__(self):
-    self.model1 = Arima()
+    self.model1 = ARIMA()
     self.model2 = LSTM()
     self.model3 = XGBOOST()
     self.model4 = SVM()

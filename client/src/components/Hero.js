@@ -13,7 +13,7 @@ const Hero = () => {
         </h1>
         <div className='flex justify-center items-center'>
           <p className='md:text-5xl sm:text-4xl text-xl font-bold py-4'>
-            SOTA algorithm for trading
+            AI algorithm for trading
           </p>
           <Typed
           className='md:text-5xl sm:text-4xl text-xl font-bold md:pl-4 pl-2'
@@ -24,7 +24,7 @@ const Hero = () => {
           />
         </div>
         <p className='md:text-2xl text-xl font-bold text-gray-500'>Join our pool of investors while tracking and splitting profits of our proprietary trading software.</p>
-        <button className='bg-[#00df9a] w-[200px] rounded-md font-medium my-6 mx-auto py-3 text-black'>Get Started</button>
+        <button className='bg-[#00df9a] w-[200px] rounded-md font-medium my-6 mx-auto py-3 text-black transform transition duration-500 hover:scale-110'>Get Started</button>
       </div>
     </div>
   );

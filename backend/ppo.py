@@ -107,6 +107,58 @@ def evaluate_agent(env, max_steps, n_eval_episodes, policy):
 
   return mean_reward, std_reward
 
+class RLAgent:
+    def __init__(self, env, hyperparameters):
+        self.env = env
+        self.hyperparameters = hyperparameters
+        self.policy = Policy(hyperparameters["state_space"], hyperparameters["action_space"], hyperparameters["h_size"]).to(device)
+        self.optimizer = optim.Adam(self.policy.parameters(), lr=hyperparameters["lr"])
+        self.scores = []
+        self.mean_rewards = []
+        self.std_rewards = []
+
+    def train(self):
+        self.scores = reinforce(self.policy,
+                                self.optimizer,
+                                self.hyperparameters["n_training_episodes"], 
+                                self.hyperparameters["max_t"],
+                                self.hyperparameters["gamma"], 
+                                1000)
+        return self.scores
+
+    def evaluate(self):
+        mean_reward, std_reward = evaluate_agent(self.env, self.hyperparameters["max_t"], self.hyperparameters["n_evaluation_episodes"], self.policy)
+        self.mean_rewards.append(mean_reward)
+        self.std_rewards.append(std_reward)
+        return mean_reward, std_reward
+
+    def plot(self):
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        plt.plot(np.arange(len(self.scores)), self.scores)
+        plt.ylabel('Score')
+        plt.xlabel('Episode #')
+        plt.show()
+    
+    def plot_evaluation(self):
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        plt.errorbar(np.arange(len(self.mean_rewards)), self.mean_rewards, yerr=self.std_rewards)
+        plt.ylabel('Mean reward')
+        plt.xlabel('Episode #')
+        plt.show()
+    
+    def save(self, path):
+        torch.save(self.policy.state_dict(), path)
+
+    def load(self, path):
+        self.policy.load_state_dict(torch.load(path))
+    
+    def get_policy(self):
+        return self.policy
+    
+    
+
 
   '''
   trading_hyperparameters = {

@@ -134,3 +134,6 @@ print("Validation data shape", dataset_val.x.shape, dataset_val.y.shape)
 
 train_dataloader = DataLoader(dataset_train, batch_size=config["training"]["batch_size"], shuffle=True)
 val_dataloader = DataLoader(dataset_val, batch_size=config["training"]["batch_size"], shuffle=True)
+
+
+
