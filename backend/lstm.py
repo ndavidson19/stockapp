@@ -11,7 +11,7 @@ class LSTMModel(nn.Module):
     def __init__(self, input_size=1, hidden_layer_size=32, num_layers=2, output_size=1, dropout=0.2):
         super().__init__()
         self.hidden_layer_size = hidden_layer_size
-
+        self.num_layers = num_layers
         self.linear_1 = nn.Linear(input_size, hidden_layer_size)
         self.relu = nn.ReLU()
         self.lstm = nn.LSTM(hidden_layer_size, hidden_size=self.hidden_layer_size, num_layers=num_layers, batch_first=True)
@@ -81,16 +81,17 @@ def run_epoch(dataloader, is_training=False):
     return epoch_loss, lr
 
 class LSTM(LSTMModel):
-    def __init__(self):
+    def __init__(self, config):
         super().__init__()
         self.model = LSTMModel()
-        self.model.to(config["training"]["device"])
-        self.model.load_state_dict(torch.load(config["training"]["model_path"]))
-        self.model.eval()
+        self.device = config["training"]["device"]
+        self.model.to(self.device)
+        self.evaluate = self.model.eval()
+        self.config = config
     
     def predict(self, X):
         X = torch.from_numpy(X).float()
-        X = X.to(config["training"]["device"])
+        X = X.to(self.device)
         X = X.unsqueeze(0)
         return self.model(X).detach().cpu().numpy()
 
@@ -99,12 +100,24 @@ class LSTM(LSTMModel):
         y_train = torch.from_numpy(y_train).float()
 
         train_dataset = torch.utils.data.TensorDataset(X_train, y_train)
-        train_dataloader = torch.utils.data.DataLoader(train_dataset, batch_size=config["training"]["batch_size"], shuffle=True)
+        train_dataloader = torch.utils.data.DataLoader(train_dataset, batch_size=self.config["training"]["batch_size"], shuffle=True)
 
-        for epoch in range(config["training"]["epochs"]):
+        for epoch in range(self.config["training"]["epochs"]):
             train_loss, lr = run_epoch(train_dataloader, is_training=True)
             print(f"Epoch: {epoch+1}, Train Loss: {train_loss:.4f}, LR: {lr:.6f}")
 
-        torch.save(self.model.state_dict(), config["training"]["model_path"])
+        torch.save(self.model.state_dict(), self.config["training"]["model_path"])
+
+    def eval(self, X_test, y_test):
+        X_test = torch.from_numpy(X_test).float()
+        y_test = torch.from_numpy(y_test).float()
+
+        test_dataset = torch.utils.data.TensorDataset(X_test, y_test)
+        test_dataloader = torch.utils.data.DataLoader(test_dataset, batch_size=self.config["training"]["batch_size"], shuffle=False)
+
+        test_loss, lr = run_epoch(test_dataloader, is_training=False)
+        print(f"Test Loss: {test_loss:.4f}")
+    
+
     
     

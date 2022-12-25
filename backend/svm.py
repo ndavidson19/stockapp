@@ -1,6 +1,7 @@
 import numpy as np
 
 
+
 class SVM:
     '''
     polynomial kernel
@@ -114,20 +115,15 @@ class SVM:
         return np.sign(linear_prediction)
 
 
-from sklearn.model_selection import train_test_split
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.7, random_state=42)
-
-from sklearn.metrics import accuracy_score
-from svm import SVM
-
-svm = SVM(kernel="poly")
-
+'''
 w, b, losses = svm.fit(X_train, y_train)
 
 pred = svm.predict(X_test)
 
 accuracy_score("Accuracy:",pred, y_test)
+
+'''
 
 
     

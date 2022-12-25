@@ -1,15 +1,17 @@
 from arima import ARIMA
 from lstm import LSTM
-from xgboost import XGBOOST
+from xgb import XGBOOST
 from svm import SVM
 from fourier import Fourier
 from polynomial_regression import PolyReg
+from sklearn.ensemble import StackingRegressor
 
 
 class EnsembleModel:
-  def __init__(self):
+  def __init__(self, config):
+
     self.model1 = ARIMA()
-    self.model2 = LSTM()
+    self.model2 = LSTM(config)
     self.model3 = XGBOOST()
     self.model4 = SVM()
     self.model5 = Fourier()
@@ -37,5 +39,7 @@ class EnsembleModel:
     # Combine the predictions of the individual models in a way that suits your needs
     y_pred = (y_pred1 + y_pred2 + y_pred3 + y_pred4 + y_pred5 + y_pred6) / 6
 
-    return y_pred
+    y_new = StackingRegressor(estimators=[('arima', self.model1), ('lstm', self.model2), ('xgboost', self.model3), ('svm', self.model4), ('fourier', self.model5), ('polyreg', self.model6)], final_estimator=LinearRegression())
+
+    return y_pred, y_new
 

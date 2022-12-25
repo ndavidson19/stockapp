@@ -4,7 +4,7 @@ import numpy as np
 
 
 class PolyReg():
-    def __init__(self, degree):
+    def __init__(self, degree = 6):
         self.degree = degree
 
     def fit(self, X, y):

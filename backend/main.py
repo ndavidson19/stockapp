@@ -4,8 +4,9 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-
 from data_pipeline import DataPipeline
+from ensemble import EnsembleModel
+
 
 config = {
     "alpha_vantage": {
@@ -39,17 +40,21 @@ config = {
         "num_epoch": 100,
         "learning_rate": 0.01,
         "scheduler_step_size": 40,
+        "scheduler_gamma": 0.1,
+        "model_path": "model.pth",
+        
     }
 }
 
 # load in the data
+    
 data_pipeline = DataPipeline(config)
 
-print(data_pipeline.get_dataset())
+print(data_pipeline.get_dataloader())
 
 
 # Define the ensemble model architecture and hyperparameters
-ensemble_model = EnsembleModel(...)
+ensemble_model = EnsembleModel(config)
 
 # Train the ensemble model using supervised learning
 ensemble_model.fit(X_train, y_train)

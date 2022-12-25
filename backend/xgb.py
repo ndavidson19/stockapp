@@ -1,3 +1,6 @@
+from xgboost import XGBRegressor
+import numpy as np
+
 
 
 class XGBOOST():

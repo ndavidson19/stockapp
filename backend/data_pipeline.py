@@ -29,10 +29,26 @@ class DataPipeline():
     def create_dataset(self, data_x, data_y):
         dataset_x = pd.DataFrame(data_x)
         dataset_y = pd.DataFrame(data_y)
-        return dataset_x, dataset_y
+        dataset = pd.concat([dataset_x, dataset_y], axis=1)
+        return dataset
 
     def get_dataset(self):
         return self.train_dataset, self.val_dataset
+
+    def get_dataloader(self):
+        return self.train_dataloader, self.val_dataloader
+
+    def get_data_x_train(self):
+        return self.data_x_train
+    
+    def get_data_x_val(self):
+        return self.data_x_val
+    
+    def get_data_y_train(self):
+        return self.data_y_train
+    
+    def get_data_y_val(self):
+        return self.data_y_val
 
     def download_data(self):
         config = self.config
