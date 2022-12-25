@@ -1,9 +1,9 @@
-from .arima import ARIMA
-from .lstm import LSTM
-from .xgboost import XGBOOST
-from .svm import SVM
-from .fourier import Fourier
-from .polynomial_regression import PolyReg
+from arima import ARIMA
+from lstm import LSTM
+from xgboost import XGBOOST
+from svm import SVM
+from fourier import Fourier
+from polynomial_regression import PolyReg
 
 
 class EnsembleModel:

@@ -1,45 +1,11 @@
 import numpy as np
-
+import pandas as pd
 
 from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
 from alpha_vantage.timeseries import TimeSeries 
 
-config = {
-    "alpha_vantage": {
-        "key": "COR04RQ1Z1P74ETF", 
-        "symbol": "SPY",
-        "outputsize": "full",
-        "key_adjusted_close": "5. adjusted close",
-    },
-    "data": {
-        "window_size": 20,
-        "train_split_size": 0.80,
-    }, 
-    "plots": {
-        "xticks_interval": 90, # show a date every 90 days
-        "color_actual": "#001f3f",
-        "color_train": "#3D9970",
-        "color_val": "#0074D9",
-        "color_pred_train": "#3D9970",
-        "color_pred_val": "#0074D9",
-        "color_pred_test": "#FF4136",
-    },
-    "model": {
-        "input_size": 1, # since we are only using 1 feature, close price
-        "num_lstm_layers": 5,
-        "lstm_size": 128,
-        "dropout": 0.2,
-    },
-    "training": {
-        "device": "cpu", # "cuda" or "cpu"
-        "batch_size": 64,
-        "num_epoch": 100,
-        "learning_rate": 0.01,
-        "scheduler_step_size": 40,
-    }
-}
-
+    
 class DataPipeline():
     def __init__(self, config):
         self.config = config
@@ -48,7 +14,25 @@ class DataPipeline():
         self.data_x, self.data_x_unseen = self.prepare_data_x()
         self.data_y = self.prepare_data_y()
         self.data_x_train, self.data_x_val, self.data_y_train, self.data_y_val = self.split_data()
-        self.to_plot_data_y_train, self.to_plot_data_y_val = self.prepare_data_for_plotting()
+        #self.to_plot_data_y_train, self.to_plot_data_y_val = self.prepare_data_for_plotting()
+        #self.to_plot_data_y_pred_train, self.to_plot_data_y_pred_val, self.to_plot_data_y_pred_test = self.prepare_data_for_plotting()
+        self.train_dataset = self.create_dataset(self.data_x_train, self.data_y_train)
+        self.val_dataset = self.create_dataset(self.data_x_val, self.data_y_val)
+        self.train_dataloader = self.create_dataloader(self.train_dataset)
+        self.val_dataloader = self.create_dataloader(self.val_dataset)
+
+    def create_dataloader(self, dataset):
+        config = self.config
+        dataloader = DataLoader(dataset, batch_size=config["training"]["batch_size"], shuffle=False)
+        return dataloader
+    
+    def create_dataset(self, data_x, data_y):
+        dataset_x = pd.DataFrame(data_x)
+        dataset_y = pd.DataFrame(data_y)
+        return dataset_x, dataset_y
+
+    def get_dataset(self):
+        return self.train_dataset, self.val_dataset
 
     def download_data(self):
         config = self.config
@@ -76,7 +60,7 @@ class DataPipeline():
 
     def prepare_data_x(self):
         config = self.config
-        normalized_data_close_price = self.normalized_data_close_price
+        normalized_data_close_price = self.normalize()
         window_size = config["data"]["window_size"]
         data_x, data_x_unseen = DataCleaning().prepare_data_x(normalized_data_close_price, window_size)
         return data_x, data_x_unseen
@@ -108,6 +92,7 @@ class DataPipeline():
         return self.data_date, self.data_close_price, self.num_data_points, self.display_date_range, self.normalized_data_close_price, self.data_x, self.data_x_unseen, self.data_y, self.data_x_train, self.data_x_val, self.data_y_train, self.data_y_val, self.to_plot_data_y_train, self.to_plot_data_y_val
     
 
+
 class Normalizer():
     def __init__(self):
         self.mu = None
@@ -121,10 +106,6 @@ class Normalizer():
 
     def inverse_transform(self, x):
         return (x*self.sd) + self.mu
-
-# normalize
-scaler = Normalizer()
-normalized_data_close_price = scaler.fit_transform(data_close_price)
 
 
 class DataCleaning():
