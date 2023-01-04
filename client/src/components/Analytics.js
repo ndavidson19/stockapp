@@ -4,7 +4,7 @@ import LottieControl from './StockAnimation';
 
 const Analytics = () => {
   return (
-    <div className='w-full bg-white py-16 px-4'>
+    <div className='w-full bg-#F6F9FC py-16 px-4'>
       <div className='max-w-[1240px] mx-auto grid md:grid-cols-2'>
         <LottieControl />
         <div className='flex flex-col justify-center'>

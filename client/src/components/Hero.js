@@ -3,28 +3,28 @@ import Typed from 'react-typed';
 
 const Hero = () => {
   return (
-    <div className='text-white'>
-      <div className='max-w-[800px] mt-[-96px] w-full h-screen mx-auto text-center flex flex-col justify-center'>
-        <p className='text-[#00df9a] font-bold p-2'>
-          TRADING WITH ARTIFICIAL INTELLIGENCE
-        </p>
-        <h1 className='md:text-7xl sm:text-6xl text-4xl font-bold md:py-6'>
-          Built with data.
+    <div className='text-black ml-52'>
+      <div className='max-w-[800px] mt-[-60px] w-full h-screen ml-5 text-left flex flex-col justify-center text-opacity-90'>
+        <h1 className='md:text-8xl sm:text-7xl text-4xl font-bold md:py-2 mix-blend-overlay'>
+          Trading with AI.
         </h1>
-        <div className='flex justify-center items-center'>
-          <p className='md:text-5xl sm:text-4xl text-xl font-bold py-4'>
-            AI algorithm for trading
-          </p>
+        <h1 className='md:text-6xl sm:text-5xl text-4xl font-bold mix-blend-overlay'>
+          Built by 
           <Typed
-          className='md:text-5xl sm:text-4xl text-xl font-bold md:pl-4 pl-2'
-            strings={['SPY', 'Options', 'Stocks']}
-            typeSpeed={120}
-            backSpeed={140}
+          className='md:text-6xl sm:text-5xl text-4xl font-bold md:pl-3 mix-blend-normal'
+            strings={['Experts', 'Scientists', 'Researchers', 'Engineers']}
+            typeSpeed={80}
+            backSpeed={50}
+            backDelay={1500}
             loop
           />
-        </div>
-        <p className='md:text-2xl text-xl font-bold text-gray-500'>Join our pool of investors while tracking and splitting profits of our proprietary trading software.</p>
-        <button className='bg-[#00df9a] w-[200px] rounded-md font-medium my-6 mx-auto py-3 text-black transform transition duration-500 hover:scale-110'>Get Started</button>
+        </h1>
+
+        <h1 className='md:text-4xl sm:text-3xl text-4xl font-bold md:py-1 mix-blend-overlay'>
+          Easy for You
+        </h1>
+        <p className='w-[600px] mt-16 mix-blend-mulitply md:text-xl text-l text-black text-opacity-75'>Join our pool of investors while tracking and splitting profits of our proprietary trading software.</p>
+        <button className='bg-black w-[200px] rounded-full font-medium my-1 py-3 text-white transform transition duration-500 hover:scale-110'>Get Started</button>
       </div>
     </div>
   );

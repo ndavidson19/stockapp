@@ -42,7 +42,12 @@ config = {
         "scheduler_step_size": 40,
         "scheduler_gamma": 0.1,
         "model_path": "model.pth",
-        
+    },
+    "arima_para": {
+        "p": range(2),
+        "d": range(2),
+        "q": range(2),
+        "seasonal_para": 2,
     }
 }
 
@@ -50,14 +55,22 @@ config = {
     
 data_pipeline = DataPipeline(config)
 
-print(data_pipeline.get_dataloader())
-
+training_data = data_pipeline.train_dataset
+validation_data = data_pipeline.val_dataset
+training_dataloader = data_pipeline.train_dataloader
+validation_dataloader = data_pipeline.val_dataloader
+print("--------------------------------")
+print("Train data shape", training_data.x.shape, training_data.y.shape)
+print("Validation data shape", validation_data.x.shape, validation_data.y.shape)
+print("--------------------------------")
+print('Training data X:' , training_data.x)
+print('Training data Y:' , training_data.y)
 
 # Define the ensemble model architecture and hyperparameters
 ensemble_model = EnsembleModel(config)
 
 # Train the ensemble model using supervised learning
-ensemble_model.fit(X_train, y_train)
+ensemble_model.fit(training_dataloader)
 
 # Define the neural network architecture and hyperparameters
 neural_network = NeuralNetwork(...)

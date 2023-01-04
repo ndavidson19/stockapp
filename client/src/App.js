@@ -9,6 +9,18 @@ import Cards from "./components/Cards";
 import Newsletter from "./components/Newsletter";
 import StockContext from "./context/StockContext";
 import ThemeContext from "./context/ThemeContext";
+import AnimatedNavbar from "./components/AnimatedNavbar";
+
+/*
+        <Navbar />
+        <Hero/>
+        <Analytics />
+        <Algorithm />
+        <Cards />
+        <Newsletter />
+*/
+
+
 
 function App() {
   const [darkMode, setDarkMode] = useState(false);
@@ -16,16 +28,20 @@ function App() {
   const [loggedIn, setLoggedIn] = useState(false);
     // if not logged in display hero
     // if logged in display dashboard
+  
+
+
     if (!loggedIn) {
       return(
       <div>
-        <Navbar />
+        <AnimatedNavbar duration={ 300 } />
         <Hero/>
         <Analytics />
         <Algorithm />
         <Cards />
         <Newsletter />
       </div>
+
       )
     }
     else {

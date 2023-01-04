@@ -3,8 +3,9 @@
 @tailwind utilities;
 
 body {
-  background-color: #000300;
+  background-color: #fff;
 }
+
 
 @layer components {
   .custom-scrollbar::-webkit-scrollbar {

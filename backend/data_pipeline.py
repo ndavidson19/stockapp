@@ -27,11 +27,8 @@ class DataPipeline():
         return dataloader
     
     def create_dataset(self, data_x, data_y):
-        dataset_x = pd.DataFrame(data_x)
-        dataset_y = pd.DataFrame(data_y)
-        dataset = pd.concat([dataset_x, dataset_y], axis=1)
-        return dataset
-
+        return TimeSeriesDataset(data_x, data_y)
+        
     def get_dataset(self):
         return self.train_dataset, self.val_dataset
 
@@ -158,6 +155,7 @@ class DataCleaning():
         data_y_val = data_y[split_index:]
         return data_x_train, data_x_val, data_y_train, data_y_val
 
+
     def prepare_data_for_plotting(self, num_data_points, data_y_train, data_y_val):
         to_plot_data_y_train = np.zeros(num_data_points)
         to_plot_data_y_val = np.zeros(num_data_points)
@@ -175,6 +173,7 @@ class DataCleaning():
         self.data_y = self.prepare_data_y(normalized_data_close_price, window_size=config["data"]["window_size"])
         self.data_x_train, self.data_x_val, self.data_y_train, self.data_y_val = self.split_data(self.data_x, self.data_y, train_split_size=config["data"]["train_split_size"])
         self.to_plot_data_y_train, self.to_plot_data_y_val = self.prepare_data_for_plotting(num_data_points, self.data_y_train, self.data_y_val)
+
 class TimeSeriesDataset(Dataset):
     def __init__(self, x, y):
         x = np.expand_dims(x, 2) # in our case, we have only 1 feature, so we need to convert `x` into [batch, sequence, features] for LSTM
@@ -186,5 +185,4 @@ class TimeSeriesDataset(Dataset):
 
     def __getitem__(self, idx):
         return (self.x[idx], self.y[idx])
-
 
