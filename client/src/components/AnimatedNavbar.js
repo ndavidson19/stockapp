@@ -73,11 +73,16 @@ export default class AnimatedNavbar extends Component {
     }
 
     return (
+      
       <Flipper
         flipKey={currentIndex}
         spring={duration === 300 ? "noWobble" : { stiffness: 10, damping: 10 }}
       >
-        <Quanta />
+        <div className="flex col-auto">
+          <div className="ml-60 mt-8">
+            <Quanta />
+          </div>
+
         <Navbar onMouseLeave={this.onMouseLeave}>
           {navbarConfig.map((n, index) => {
             return (
@@ -101,6 +106,8 @@ export default class AnimatedNavbar extends Component {
             )
           })}
         </Navbar>
+        <button className='bg-[#D3D3D3] bg-opacity-25 w-[125px] ml-52 rounded-full font-medium my-4 text-white transform transition duration-500 hover:brightness-125 hover:scale-110'>Sign In</button>
+        </div>
       </Flipper>
     )
   }

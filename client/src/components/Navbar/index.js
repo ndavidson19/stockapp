@@ -16,9 +16,11 @@ class Navbar extends Component {
   render() {
     const { children, onMouseLeave } = this.props
     return (
+      <div className="ml-56">
       <NavbarEl onMouseLeave={onMouseLeave}>
         <NavbarList>{children}</NavbarList>
       </NavbarEl>
+      </div>
     )
   }
 }

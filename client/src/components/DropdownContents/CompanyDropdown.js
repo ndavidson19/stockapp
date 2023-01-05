@@ -19,7 +19,7 @@ const CompanyDropdown = () => {
         <ul>
           <HeadingLink>
             <a href="/">
-              <Icon /> About Stripe
+              <Icon /> About Quanta
             </a>
           </HeadingLink>
           <HeadingLink>
@@ -46,10 +46,10 @@ const CompanyDropdown = () => {
           </Heading>
           <LinkList marginLeft="25px">
             <li>
-              <a href="/">Stripe Atlas &rsaquo;</a>
+              <a href="/">Quanta Atlas &rsaquo;</a>
             </li>
             <li>
-              <a href="/">Stripe Home &rsaquo;</a>
+              <a href="/">Quanta Home &rsaquo;</a>
             </li>
             <li>
               <a href="/">Improved Fraud Detection &rsaquo;</a>

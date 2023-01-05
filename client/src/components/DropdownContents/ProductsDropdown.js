@@ -59,8 +59,8 @@ const ProductsDropdown = () => {
               <Logo color="blue" />
             </div>
             <div>
-              <Heading color="blue">Payments</Heading>
-              <p>A complete payments platform</p>
+              <Heading color="blue">Trading</Heading>
+              <p>A complete trading platform</p>
             </div>
           </li>
           <li>
@@ -103,7 +103,7 @@ const ProductsDropdown = () => {
         <WorksWithStripe>
           <Heading noMarginBottom>
             <a href="/">
-              <Icon /> Works with AIT
+              <Icon /> Works with Quanta
             </a>
           </Heading>
         </WorksWithStripe>
