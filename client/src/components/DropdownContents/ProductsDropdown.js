@@ -103,7 +103,7 @@ const ProductsDropdown = () => {
         <WorksWithStripe>
           <Heading noMarginBottom>
             <a href="/">
-              <Icon /> Works with Stripe
+              <Icon /> Works with AIT
             </a>
           </Heading>
         </WorksWithStripe>
