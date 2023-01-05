@@ -6,6 +6,7 @@ import DropdownContainer from "./DropdownContainer"
 import CompanyDropdown from "./DropdownContents/CompanyDropdown"
 import DevelopersDropdown from "./DropdownContents/DevelopersDropdown"
 import ProductsDropdown from "./DropdownContents/ProductsDropdown"
+import { ReactComponent as Quanta } from '../assets/Quanta.svg';
 
 const navbarConfig = [
   { title: "Products", dropdown: ProductsDropdown },
@@ -76,6 +77,7 @@ export default class AnimatedNavbar extends Component {
         flipKey={currentIndex}
         spring={duration === 300 ? "noWobble" : { stiffness: 10, damping: 10 }}
       >
+        <Quanta />
         <Navbar onMouseLeave={this.onMouseLeave}>
           {navbarConfig.map((n, index) => {
             return (
