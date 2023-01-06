@@ -1,4 +1,4 @@
-# NEXTGEN TRADING
+# Quanta
 
 [![npm version][npm-badge]][npm-url]
 [![npm downloads][downloads-badge]][npm-url]
