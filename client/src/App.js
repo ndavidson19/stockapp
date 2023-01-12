@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import "./App.css";
 import Analytics from "./components/Analytics";
 import Dashboard from "./components/Dashboard";
@@ -11,21 +11,19 @@ import StockContext from "./context/StockContext";
 import ThemeContext from "./context/ThemeContext";
 import AnimatedNavbar from "./components/AnimatedNavbar";
 
-/*
-        <Navbar />
-        <Hero/>
-        <Analytics />
-        <Algorithm />
-        <Cards />
-        <Newsletter />
-*/
-
 
 
 function App() {
   const [darkMode, setDarkMode] = useState(false);
   const [stockSymbol, setStockSymbol] = useState("SPY");
   const [loggedIn, setLoggedIn] = useState(false);
+  const cardsRef = useRef(null);
+
+  const scrollToCards = () => {
+    cardsRef.current.scrollIntoView({ behavior: "smooth" });
+  };
+
+
     // if not logged in display hero
     // if logged in display dashboard
   
@@ -35,10 +33,10 @@ function App() {
       return(
       <div>
         <AnimatedNavbar duration={ 300 } />
-        <Hero/>
+        <Hero refs={cardsRef} scrollToCards = {scrollToCards}/>
         <Analytics />
         <Algorithm />
-        <Cards />
+        <Cards ref = {cardsRef}/>
         <Newsletter />
       </div>
 

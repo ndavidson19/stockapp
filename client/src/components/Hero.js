@@ -1,10 +1,16 @@
-import React from 'react';
+
+
+import React, { useRef } from 'react';
 import Typed from 'react-typed';
 import { Canvas } from '@react-three/fiber'
 import Rocket from './Rocket';
 
 
-const Hero = () => {
+
+const Hero = (props) => {
+
+  const ScrollToSection1 = props.scrollToCards;
+
   return (
     <div className='text-black ml-52 flex'>
       <div className='max-w-[900px] mt-[-50px] w-full h-screen ml-5 text-left flex flex-col justify-center text-opacity-80'>
@@ -27,7 +33,7 @@ const Hero = () => {
           Easy for You
         </h1>
         <p className='w-[600px] mt-16 mix-blend-mulitply md:text-xl flex text-l text-black text-opacity-75'>Join our pool of investors while tracking and splitting profits of our proprietary trading software.</p>
-        <button className='bg-black w-[200px] rounded-full font-medium my-1 py-3 text-white transform transition duration-500 hover:scale-110'>Get Started</button>
+        <button type='button' onClick={ScrollToSection1} className='bg-black w-[200px] rounded-full font-medium my-1 py-3 text-white transform transition duration-500 hover:scale-110'>Get Started</button>
       </div>
       <div className='w-full h-screen'>
         <Canvas>
@@ -37,5 +43,7 @@ const Hero = () => {
     </div>
   );
 };
+
+
 
 export default Hero;

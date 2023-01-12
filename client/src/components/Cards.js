@@ -6,9 +6,12 @@ import BeginAlien from '../assets/beginalien.png'
 import InterAlien from '../assets/interalien.png'
 import AdvAlien from '../assets/advancedalien.png'
 
-const Cards = () => {
+
+
+const Cards = (props) => {
+
   return (
-    <div className='w-full py-[10rem] px-4 bg-white'>
+    <div ref = {props.cardsRef} id="section1" className='w-full py-[10rem] px-4 bg-white'>
       <div className='max-w-[1240px] mx-auto grid md:grid-cols-3 gap-8'>
           <div className='w-full shadow-xl flex flex-col p-4 my-4 rounded-lg hover:scale-105 duration-300'>
               <img className='w-20 mx-auto mt-[-3rem] bg-white' src={BeginAlien} alt="/" />

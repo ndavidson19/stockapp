@@ -5,10 +5,52 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 
+config = {
+    "alpha_vantage": {
+        "key": "COR04RQ1Z1P74ETF", 
+        "symbol": "SPY",
+        "outputsize": "full",
+        "key_adjusted_close": "5. adjusted close",
+    },
+    "data": {
+        "window_size": 20,
+        "train_split_size": 0.80,
+    }, 
+    "plots": {
+        "xticks_interval": 90, # show a date every 90 days
+        "color_actual": "#001f3f",
+        "color_train": "#3D9970",
+        "color_val": "#0074D9",
+        "color_pred_train": "#3D9970",
+        "color_pred_val": "#0074D9",
+        "color_pred_test": "#FF4136",
+    },
+    "model": {
+        "input_size": 1, # since we are only using 1 feature, close price
+        "num_lstm_layers": 5,
+        "lstm_size": 128,
+        "dropout": 0.2,
+    },
+    "training": {
+        "device": "cpu", # "cuda" or "cpu"
+        "batch_size": 64,
+        "epochs": 100,
+        "learning_rate": 0.01,
+        "scheduler_step_size": 40,
+        "scheduler_gamma": 0.1,
+        "model_path": "model.pth",
+    },
+    "arima_para": {
+        "p": range(2),
+        "d": range(2),
+        "q": range(2),
+        "seasonal_para": 2,
+    }
+}
 
 
 class LSTMModel(nn.Module):
-    def __init__(self, input_size=1, hidden_layer_size=32, num_layers=2, output_size=1, dropout=0.2):
+    def __init__(self, config=config, input_size=1, hidden_layer_size=32, num_layers=2, output_size=1, dropout=0.2):
         super().__init__()
         self.hidden_layer_size = hidden_layer_size
         self.num_layers = num_layers
@@ -18,10 +60,12 @@ class LSTMModel(nn.Module):
         self.dropout = nn.Dropout(dropout)
         self.linear_2 = nn.Linear(num_layers*hidden_layer_size, output_size)
         
-
-
-        
         self.init_weights()
+        self.config = config
+        self.device = config["training"]["device"]
+        #self.model.to(self.device)
+        #self.evaluate = self.model.eval()
+
 
     def init_weights(self):
         for name, param in self.lstm.named_parameters():
@@ -50,52 +94,49 @@ class LSTMModel(nn.Module):
         predictions = self.linear_2(x)
         return predictions[:,-1]
 
-def run_epoch(dataloader, is_training=False):
-    epoch_loss = 0
-
-    if is_training:
-        model.train()
-    else:
-        model.eval()
-
-    for idx, (x, y) in enumerate(dataloader):
-        if is_training:
-            optimizer.zero_grad()
-
-        batchsize = x.shape[0]
-
-        x = x.to(config["training"]["device"])
-        y = y.to(config["training"]["device"])
-
-        out = model(x)
-        loss = criterion(out.contiguous(), y.contiguous())
+    def run_epoch(self, model, dataloader, is_training = False):
+        
+        optimizer = optim.Adam(model.parameters(), lr=config["training"]["learning_rate"], betas=(0.9, 0.98), eps=1e-9)
+        scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=config["training"]["scheduler_step_size"], gamma=0.1)
+        criterion = nn.MSELoss()
+        epoch_loss = 0
 
         if is_training:
-            loss.backward()
-            optimizer.step()
+            model.train()
+        else:
+            model.eval()
 
-        epoch_loss += (loss.detach().item() / batchsize)
+        for idx, (x, y) in enumerate(dataloader):
+            if is_training:
+                optimizer.zero_grad()
 
-    lr = scheduler.get_last_lr()[0]
+            batchsize = x.shape[0]
 
-    return epoch_loss, lr
+            x = x.to(self.config["training"]["device"])
+            y = y.to(self.config["training"]["device"])
 
-class LSTM(LSTMModel):
-    def __init__(self, config):
-        super().__init__()
-        self.model = LSTMModel()
-        self.device = config["training"]["device"]
-        self.model.to(self.device)
-        self.evaluate = self.model.eval()
-        self.config = config
-    
+            out = model(x)
+            loss = criterion(out.contiguous(), y.contiguous())
+
+            if is_training:
+                loss.backward()
+                optimizer.step()
+
+            epoch_loss += (loss.detach().item() / batchsize)
+
+        lr = scheduler.get_last_lr()[0]
+
+        return epoch_loss, lr
+
     def predict(self, X):
         X = torch.from_numpy(X).float()
         X = X.to(self.device)
         X = X.unsqueeze(0)
         return self.model(X).detach().cpu().numpy()
 
-    def fit(self, X_train, y_train):
+    def fit(self, model, X_train, y_train):
+        model = model.to(self.config["training"]["device"])
+
         X_train = torch.from_numpy(X_train).float()
         y_train = torch.from_numpy(y_train).float()
 
@@ -103,7 +144,7 @@ class LSTM(LSTMModel):
         train_dataloader = torch.utils.data.DataLoader(train_dataset, batch_size=self.config["training"]["batch_size"], shuffle=True)
 
         for epoch in range(self.config["training"]["epochs"]):
-            train_loss, lr = run_epoch(train_dataloader, is_training=True)
+            train_loss, lr = self.run_epoch(dataloader=train_dataloader, model=model, is_training=True)
             print(f"Epoch: {epoch+1}, Train Loss: {train_loss:.4f}, LR: {lr:.6f}")
 
         torch.save(self.model.state_dict(), self.config["training"]["model_path"])
@@ -115,8 +156,10 @@ class LSTM(LSTMModel):
         test_dataset = torch.utils.data.TensorDataset(X_test, y_test)
         test_dataloader = torch.utils.data.DataLoader(test_dataset, batch_size=self.config["training"]["batch_size"], shuffle=False)
 
-        test_loss, lr = run_epoch(test_dataloader, is_training=False)
+        test_loss, lr = self.run_epoch(test_dataloader, is_training=False)
         print(f"Test Loss: {test_loss:.4f}")
+    
+
     
 
     

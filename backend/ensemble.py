@@ -1,5 +1,5 @@
 from arima import ARIMA
-from lstm import LSTM
+from lstm import LSTMModel
 from xgb import XGBOOST
 from svm import SVM
 from fourier import Fourier
@@ -12,18 +12,19 @@ class EnsembleModel:
   def __init__(self, config):
 
     #self.model1 = ARIMA(config)
-    self.model2 = LSTM(config)
+    self.LSTM = LSTMModel()
     #self.model3 = XGBOOST()
     #self.model4 = SVM()
     #self.model5 = Fourier()
     #self.model6 = PolyReg()
+    self.config = config
     
   def fit(self, training_data):
     # Train each individual model on the training data
 
 
     #self.model1.fit(training_data) # no y_train for ARIMA
-    self.model2.fit(training_data)
+    self.LSTM.fit(model = self.LSTM, X_train = training_data.x, y_train = training_data.y)
     #self.model3.fit(training_data.x, training_data.y)
     #self.model4.fit(training_data.x, training_data.y)
     #self.model5.fit(training_data.x, training_data.y)

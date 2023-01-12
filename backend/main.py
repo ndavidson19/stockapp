@@ -37,7 +37,7 @@ config = {
     "training": {
         "device": "cpu", # "cuda" or "cpu"
         "batch_size": 64,
-        "num_epoch": 100,
+        "epochs": 100,
         "learning_rate": 0.01,
         "scheduler_step_size": 40,
         "scheduler_gamma": 0.1,
@@ -70,7 +70,7 @@ print('Training data Y:' , training_data.y)
 ensemble_model = EnsembleModel(config)
 
 # Train the ensemble model using supervised learning
-ensemble_model.fit(training_dataloader)
+ensemble_model.fit(training_data)
 
 # Define the neural network architecture and hyperparameters
 neural_network = NeuralNetwork(...)

@@ -20,7 +20,6 @@ export default function Rocket({ ...props }) {
     rocketRef.current.rotation.y += 0.007555
     const elapsedTime = state.clock.getElapsedTime()
     setRocketPosition(Math.sin(elapsedTime) * 200)
-    console.log(rocketPosition)
   })
 
   return (
