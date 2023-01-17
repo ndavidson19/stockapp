@@ -63,8 +63,6 @@ class LSTMModel(nn.Module):
         self.init_weights()
         self.config = config
         self.device = config["training"]["device"]
-        #self.model.to(self.device)
-        #self.evaluate = self.model.eval()
 
 
     def init_weights(self):
@@ -134,7 +132,7 @@ class LSTMModel(nn.Module):
         X = X.unsqueeze(0)
         return self.model(X).detach().cpu().numpy()
 
-    def fit(self, model, X_train, y_train):
+    def fit(self, model, X_train, y_train, X_val, y_val):
         model = model.to(self.config["training"]["device"])
 
         X_train = torch.from_numpy(X_train).float()
@@ -147,17 +145,17 @@ class LSTMModel(nn.Module):
             train_loss, lr = self.run_epoch(dataloader=train_dataloader, model=model, is_training=True)
             print(f"Epoch: {epoch+1}, Train Loss: {train_loss:.4f}, LR: {lr:.6f}")
 
-        torch.save(self.model.state_dict(), self.config["training"]["model_path"])
-
-    def eval(self, X_test, y_test):
-        X_test = torch.from_numpy(X_test).float()
-        y_test = torch.from_numpy(y_test).float()
-
+        torch.save(model.state_dict(), self.config["training"]["model_path"])
+        
+        X_test = torch.from_numpy(X_val).float()
+        y_test = torch.from_numpy(y_val).float()
+        
         test_dataset = torch.utils.data.TensorDataset(X_test, y_test)
         test_dataloader = torch.utils.data.DataLoader(test_dataset, batch_size=self.config["training"]["batch_size"], shuffle=False)
 
-        test_loss, lr = self.run_epoch(test_dataloader, is_training=False)
+        test_loss, lr = self.run_epoch(model, dataloader=test_dataloader, is_training=False)
         print(f"Test Loss: {test_loss:.4f}")
+
     
 
     

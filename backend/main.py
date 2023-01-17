@@ -70,7 +70,8 @@ print('Training data Y:' , training_data.y)
 ensemble_model = EnsembleModel(config)
 
 # Train the ensemble model using supervised learning
-ensemble_model.fit(training_data)
+ensemble_model.fit(training_data, validation_data)
+#ensemble_model.predict(validation_data)
 
 # Define the neural network architecture and hyperparameters
 neural_network = NeuralNetwork(...)

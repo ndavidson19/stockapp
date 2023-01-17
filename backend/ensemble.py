@@ -19,22 +19,22 @@ class EnsembleModel:
     #self.model6 = PolyReg()
     self.config = config
     
-  def fit(self, training_data):
+  def fit(self, training_data, validation_data):
     # Train each individual model on the training data
 
 
     #self.model1.fit(training_data) # no y_train for ARIMA
-    self.LSTM.fit(model = self.LSTM, X_train = training_data.x, y_train = training_data.y)
+    self.LSTM.fit(model = self.LSTM, X_train = training_data.x, y_train = training_data.y, X_val=validation_data.x, y_val = validation_data.y)
     #self.model3.fit(training_data.x, training_data.y)
     #self.model4.fit(training_data.x, training_data.y)
     #self.model5.fit(training_data.x, training_data.y)
     #self.model6.fit(training_data.x, training_data.y)
 
     
-  def predict(self, X):
+  def predict(self, validation_data):
     # Use each individual model to make predictions on the input data
     #y_pred1 = self.model1.predict(X)
-    y_pred2 = self.model2.predict(X)
+    y_pred2 = self.LSTM.eval(X_test=validation_data.x, y_test = validation_data.y)
     #y_pred3 = self.model3.predict(X)
     #y_pred4 = self.model4.predict(X)
     #y_pred5 = self.model5.predict(X)
