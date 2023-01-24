@@ -14,6 +14,7 @@ import gym
 class NeuralNetwork(nn.Module):
     '''
     Neural Network with the purpose of predicting the reward for the RL Agent
+    The Reward in this case is the return of the portfolio
     This is the neural network that will be trained using supervised learning from the simulated ensemble model
     '''
     def __init__(self, s_size, a_size, h_size):
@@ -55,4 +56,3 @@ class NeuralNetwork(nn.Module):
             if t % 100 == 99:
                 print(t, loss.item())
 
-    

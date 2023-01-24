@@ -3,6 +3,7 @@ import pandas as pd
 
 from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
+from sklearn.model_selection import train_test_split
 from alpha_vantage.timeseries import TimeSeries 
 
     
@@ -13,11 +14,15 @@ class DataPipeline():
         self.normalized_data_close_price = self.normalize()
         self.data_x, self.data_x_unseen = self.prepare_data_x()
         self.data_y = self.prepare_data_y()
+        self.data_1d_x, self.data_1d_y =self.prepare_data_1d()
         self.data_x_train, self.data_x_val, self.data_y_train, self.data_y_val = self.split_data()
+        self.data_1d_x_train, self.data_1d_x_val, self.data_1d_y_train, self.data_1d_y_val = self.split_data_1d()
         #self.to_plot_data_y_train, self.to_plot_data_y_val = self.prepare_data_for_plotting()
         #self.to_plot_data_y_pred_train, self.to_plot_data_y_pred_val, self.to_plot_data_y_pred_test = self.prepare_data_for_plotting()
         self.train_dataset = self.create_dataset(self.data_x_train, self.data_y_train)
+        self.train_dataset_1d = self.create_1d_dataset(self.data_1d_x_train, self.data_1d_y_train)
         self.val_dataset = self.create_dataset(self.data_x_val, self.data_y_val)
+        self.val_dataset_1d = self.create_1d_dataset(self.data_1d_x_val,  self.data_1d_y_val)
         self.train_dataloader = self.create_dataloader(self.train_dataset)
         self.val_dataloader = self.create_dataloader(self.val_dataset)
 
@@ -29,6 +34,9 @@ class DataPipeline():
     def create_dataset(self, data_x, data_y):
         return TimeSeriesDataset(data_x, data_y)
         
+    def create_1d_dataset(self, data_x, data_y):
+        return TimeSeries1DDataset(data_x, data_y)
+
     def get_dataset(self):
         return self.train_dataset, self.val_dataset
 
@@ -71,6 +79,14 @@ class DataPipeline():
         normalized_data_close_price = scaler.fit_transform(data_close_price)
         return normalized_data_close_price
 
+    def prepare_data_1d(self):
+        normalized_data_close_price = self.normalized_data_close_price
+        scaler = Normalizer()
+        x = np.array(range(len(normalized_data_close_price)))
+        normalized_x = scaler.fit_transform(x.reshape(-1, 1))
+        data_1d_y = DataCleaning().prepare_1d_data(normalized_data_close_price)
+        return normalized_x.flatten(), data_1d_y.flatten()
+
     def prepare_data_x(self):
         config = self.config
         normalized_data_close_price = self.normalize()
@@ -92,6 +108,14 @@ class DataPipeline():
         train_split_size = config["data"]["train_split_size"]
         data_x_train, data_x_val, data_y_train, data_y_val = DataCleaning().split_data(data_x, data_y, train_split_size)
         return data_x_train, data_x_val, data_y_train, data_y_val
+    
+    def split_data_1d(self):
+        config = self.config
+        data_x = self.data_1d_x
+        data_y = self.data_1d_y
+        train_split_size = config["data"]["train_split_size"]
+        data_1d_x_train, data_1d_x_val, data_1d_y_train, data_1d_y_val = DataCleaning().split_data(data_x, data_y, train_split_size)
+        return data_1d_x_train, data_1d_x_val, data_1d_y_train, data_1d_y_val
     
     def prepare_data_for_plotting(self):
         config = self.config
@@ -139,6 +163,13 @@ class DataCleaning():
         output = np.lib.stride_tricks.as_strided(x, shape=(n_row, window_size), strides=(x.strides[0], x.strides[0]))
         return output[:-1], output[-1]
 
+    def prepare_1d_data(self, x):
+        '''
+        Prepares data for 1d models such as polynomial regression
+        '''
+        x = x.reshape(-1, 1)
+        return x
+
     def prepare_data_y(self, x, window_size):
         # # perform simple moving average
         # output = np.convolve(x, np.ones(window_size), 'valid') / window_size
@@ -146,6 +177,13 @@ class DataCleaning():
         # use the next day as label
         output = x[window_size:]
         return output
+
+    def split_data_1d(self, x, y, train_split_size):
+        '''
+        Splits data for 1d models such as polynomial regression
+        '''
+        x_train, x_val, y_train, y_val = train_test_split(x, y, train_size=train_split_size, shuffle=False)
+        return x_train, x_val, y_train, y_val
 
     def split_data(self, data_x, data_y, train_split_size):
         split_index = int(data_y.shape[0]*train_split_size)
@@ -185,4 +223,17 @@ class TimeSeriesDataset(Dataset):
 
     def __getitem__(self, idx):
         return (self.x[idx], self.y[idx])
+
+
+class TimeSeries1DDataset(Dataset):
+    def __init__(self, x, y):
+        self.x = x.astype(np.float32)
+        self.y = y.astype(np.float32)
+        
+    def __len__(self):
+        return len(self.x)
+
+    def __getitem__(self, idx):
+        return (self.x[idx], self.y[idx])
+
 

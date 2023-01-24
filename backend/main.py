@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 from data_pipeline import DataPipeline
 from ensemble import EnsembleModel
-
+from nnet import NeuralNetwork
 
 config = {
     "alpha_vantage": {
@@ -56,22 +56,33 @@ config = {
 data_pipeline = DataPipeline(config)
 
 training_data = data_pipeline.train_dataset
+training_data_1d = data_pipeline.train_dataset_1d
 validation_data = data_pipeline.val_dataset
+validation_data_1d = data_pipeline.val_dataset_1d
 training_dataloader = data_pipeline.train_dataloader
 validation_dataloader = data_pipeline.val_dataloader
 print("--------------------------------")
 print("Train data shape", training_data.x.shape, training_data.y.shape)
+print("Train 1D data shape", training_data_1d.x.shape, training_data_1d.y.shape)
 print("Validation data shape", validation_data.x.shape, validation_data.y.shape)
+print("Validation 1D data shape", validation_data_1d.x.shape, validation_data_1d.y.shape)
+
 print("--------------------------------")
 print('Training data X:' , training_data.x)
 print('Training data Y:' , training_data.y)
+print('Training data 1D X:' , training_data_1d.x)
+print('Training data 1D Y:' , training_data_1d.y)
+print('Validation data X:' , validation_data.x)
+print('Validation data Y:' , validation_data.y)
+print('Validation data 1D X:' , validation_data_1d.x)
+print('Validation data 1D Y:' , validation_data_1d.y)
 
 # Define the ensemble model architecture and hyperparameters
 ensemble_model = EnsembleModel(config)
 
 # Train the ensemble model using supervised learning
-ensemble_model.fit(training_data, validation_data)
-#ensemble_model.predict(validation_data)
+ensemble_model.fit(training_data, validation_data, training_data_1d=training_data_1d)
+ensemble_model.predict(validation_data_1d)
 
 # Define the neural network architecture and hyperparameters
 neural_network = NeuralNetwork(...)
