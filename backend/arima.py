@@ -19,7 +19,7 @@ class ARIMA():
                              for x in list(itertools.product(p, d, q))]
 
     def fit(self, ts):
-        warnings.filterwarnings("ignore")
+        warnings.filterwarnings("ignore")  # specify to ignore warning messages
         results_list = []
         print(self.pdq, self.seasonal_pdq)
         for param in self.pdq:

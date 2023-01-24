@@ -11,7 +11,7 @@ from data_pipeline import DataPipeline
 class EnsembleModel:
   def __init__(self, config):
 
-    #self.model1 = ARIMA(config)
+    self.ARIMA = ARIMA(config)
     self.LSTM = LSTMModel()
     #self.model3 = XGBOOST()
     #self.model4 = SVM()
@@ -23,7 +23,7 @@ class EnsembleModel:
     # Train each individual model on the training data
 
 
-    #self.model1.fit(training_data) # no y_train for ARIMA
+    self.ARIMA.fit(training_data_1d.x) # no y_train for ARIMA
     #self.LSTM.fit(model = self.LSTM, X_train = training_data.x, y_train = training_data.y, X_val=validation_data.x, y_val = validation_data.y)
     #self.model3.fit(training_data.x, training_data.y)
     #self.model4.fit(training_data.x, training_data.y)
