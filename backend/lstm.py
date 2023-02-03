@@ -39,6 +39,7 @@ config = {
         "scheduler_step_size": 40,
         "scheduler_gamma": 0.1,
         "model_path": "model.pth",
+        "model_name": "lstm",
     },
     "arima_para": {
         "p": range(2),
@@ -119,18 +120,34 @@ class LSTMModel(nn.Module):
             if is_training:
                 loss.backward()
                 optimizer.step()
+                scheduler.step()
 
             epoch_loss += (loss.detach().item() / batchsize)
 
         lr = scheduler.get_last_lr()[0]
+        
 
         return epoch_loss, lr
 
-    def predict(self, X):
-        X = torch.from_numpy(X).float()
-        X = X.to(self.device)
-        X = X.unsqueeze(0)
-        return self.model(X).detach().cpu().numpy()
+    def predict(self, test_dataloader, x_unseen):
+        model = torch.load(self.config["training"]["model_name"] + ".pt")
+        model.eval()
+        predictions = []
+        for idx, (x, y) in enumerate(test_dataloader):
+            x = x.to(self.config["training"]["device"])
+            y = y.to(self.config["training"]["device"])
+            out = model(x)
+            predictions.append(out.detach().cpu().numpy())
+
+        x = torch.tensor(x_unseen).float().to(config["training"]["device"]).unsqueeze(0).unsqueeze(2) # this is the data type and shape required, [batch, sequence, feature]
+        prediction = model(x)
+        prediction = prediction.cpu().detach().numpy()
+        return print("Validation Predictions:", np.concatenate(predictions), "Next day price is:", prediction)
+
+        #X = torch.from_numpy(X).float()
+        #X = X.to(self.device)
+        #X = X.unsqueeze(0)
+        #return self.model(X).detach().cpu().numpy()
 
     def fit(self, model, X_train, y_train, X_val, y_val):
         model = model.to(self.config["training"]["device"])
@@ -140,12 +157,19 @@ class LSTMModel(nn.Module):
 
         train_dataset = torch.utils.data.TensorDataset(X_train, y_train)
         train_dataloader = torch.utils.data.DataLoader(train_dataset, batch_size=self.config["training"]["batch_size"], shuffle=True)
+        val_dataset = torch.utils.data.TensorDataset(torch.from_numpy(X_val).float(), torch.from_numpy(y_val).float())
+        val_dataloader = torch.utils.data.DataLoader(val_dataset, batch_size=self.config["training"]["batch_size"], shuffle=False) 
 
         for epoch in range(self.config["training"]["epochs"]):
             train_loss, lr = self.run_epoch(dataloader=train_dataloader, model=model, is_training=True)
-            print(f"Epoch: {epoch+1}, Train Loss: {train_loss:.4f}, LR: {lr:.6f}")
+            loss_val, lr_val = self.run_epoch(dataloader=val_dataloader, model=model, is_training=False)
+            
+            #print(f"Epoch: {epoch+1} | Train Loss: {train_loss:.4f} | LR: {lr:.6f}")
+            print('Epoch[{}/{}] | loss train:{:.6f} | loss validation:{:.6f} | lr:{:.6f}'
+              .format(epoch+1, config["training"]["epochs"], train_loss, loss_val, lr))
 
         torch.save(model.state_dict(), self.config["training"]["model_path"])
+        torch.save(model, self.config["training"]["model_name"] + ".pt")
         
         X_test = torch.from_numpy(X_val).float()
         y_test = torch.from_numpy(y_val).float()

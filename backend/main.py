@@ -61,6 +61,7 @@ validation_data = data_pipeline.val_dataset
 validation_data_1d = data_pipeline.val_dataset_1d
 training_dataloader = data_pipeline.train_dataloader
 validation_dataloader = data_pipeline.val_dataloader
+x_unseen = data_pipeline.data_x_unseen
 print("--------------------------------")
 print("Train data shape", training_data.x.shape, training_data.y.shape)
 print("Train 1D data shape", training_data_1d.x.shape, training_data_1d.y.shape)
@@ -82,7 +83,7 @@ ensemble_model = EnsembleModel(config)
 
 # Train the ensemble model using supervised learning
 ensemble_model.fit(training_data, validation_data, training_data_1d=training_data_1d)
-ensemble_model.predict(validation_data_1d)
+ensemble_model.predict(validation_data, validation_data_1d = validation_data_1d, validation_dataloader = validation_dataloader, x_unseen = x_unseen)
 
 # Define the neural network architecture and hyperparameters
 neural_network = NeuralNetwork(...)

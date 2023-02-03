@@ -170,8 +170,8 @@ print("Validation data shape", dataset_val.x.shape, dataset_val.y.shape)
 print(dataset_train.x, dataset_train.y)
 
 
-train_dataloader = DataLoader(dataset_train, batch_size=config["training"]["batch_size"], shuffle=True)
-val_dataloader = DataLoader(dataset_val, batch_size=config["training"]["batch_size"], shuffle=True)
+train_dataloader = DataLoader(dataset_train, batch_size=config["training"]["batch_size"], shuffle=False)
+val_dataloader = DataLoader(dataset_val, batch_size=config["training"]["batch_size"], shuffle=False)
 
 
 
@@ -248,8 +248,8 @@ def run_epoch(dataloader, is_training=False):
 
     return epoch_loss, lr
 
-train_dataloader = DataLoader(dataset_train, batch_size=config["training"]["batch_size"], shuffle=True)
-val_dataloader = DataLoader(dataset_val, batch_size=config["training"]["batch_size"], shuffle=True)
+train_dataloader = DataLoader(dataset_train, batch_size=config["training"]["batch_size"], shuffle=False)
+val_dataloader = DataLoader(dataset_val, batch_size=config["training"]["batch_size"], shuffle=False)
 
 
 model = LSTMModel(input_size=config["model"]["input_size"], hidden_layer_size=config["model"]["lstm_size"], num_layers=config["model"]["num_lstm_layers"], output_size=1, dropout=config["model"]["dropout"])
@@ -290,7 +290,7 @@ for idx, (x, y) in enumerate(train_dataloader):
 
 predicted_val = np.array([])
 
-for idx, (x, y) in enumerate(val_dataloader):
+for idx, (x, y) in enumerate(test_dataloader):
     x = x.to(config["training"]["device"])
     out = model(x)
     out = out.cpu().detach().numpy()

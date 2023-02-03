@@ -86,21 +86,24 @@ class ARIMA():
             plt.savefig(ts_label + '_dynamic_pred.png', dpi=300)
         plt.show()
 
-    def forcast(self, ts, n_steps, ts_label):
+    def forecast(self, ts, n_steps, ts_label = None):
         # Get forecast n_steps ahead in future
         pred_uc = self.final_result.get_forecast(steps=n_steps)
 
         # Get confidence intervals of forecasts
         pred_ci = pred_uc.conf_int()
-        ax = ts.plot(label='observed', figsize=(15, 10))
-        pred_uc.predicted_mean.plot(ax=ax, label='Forecast in Future')
-        ax.fill_between(pred_ci.index,
-                        pred_ci.iloc[:, 0],
-                        pred_ci.iloc[:, 1], color='k', alpha=.25)
-        ax.set_xlabel('Time')
-        ax.set_ylabel(ts_label)
-        plt.tight_layout()
-        plt.savefig(ts_label + '_forcast.png', dpi=300)
-        plt.legend()
-        plt.show()
+
+        print(pred_ci)
+       
+        #ax = plt.plot(ts.x.flatten(), ts.y.flatten(), label='observed')
+        #pred_uc.predicted_mean.plot(ax=ax, label='Forecast in Future', figsize=(15, 10))
+        #ax.fill_between(pred_ci.index,
+                        #pred_ci.iloc[:, 0],
+                        #pred_ci.iloc[:, 1], color='k', alpha=.25)
+        #ax.set_xlabel('Time')
+        # ax.set_ylabel(ts_label)
+        #plt.tight_layout()
+        #plt.savefig(ts_label + '_forcast.png', dpi=300) 
+        #plt.legend()
+        #plt.show()
 

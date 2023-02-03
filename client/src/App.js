@@ -29,7 +29,7 @@ function App() {
   
 
 
-    if (!loggedIn) {
+    if (loggedIn) {
       return(
       <div>
         <AnimatedNavbar duration={ 300 } />
