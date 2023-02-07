@@ -48,7 +48,18 @@ config = {
         "d": range(2),
         "q": range(2),
         "seasonal_para": 2,
-    }
+    },
+    "xgb": {
+        "n_estimators": 100,
+        "max_depth": 3,
+        "learning_rate": 0.1,
+        "subsample": 0.5,
+        "colsample_bytree": 1,
+        "gamma": 0,
+        "reg_alpha": 0,
+        "reg_lambda": 1,
+        "min_child_weight": 1,
+    },
 }
 
 # load in the data
