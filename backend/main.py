@@ -93,7 +93,7 @@ print('Validation data 1D Y:' , validation_data_1d.y)
 ensemble_model = EnsembleModel(config)
 
 # Train the ensemble model using supervised learning
-ensemble_model.fit(training_data, validation_data, training_data_1d=training_data_1d)
+ensemble_model.fit(training_data, validation_data, training_data_1d=training_data_1d, validation_data_1d=validation_data_1d)
 ensemble_model.predict(validation_data, validation_data_1d = validation_data_1d, validation_dataloader = validation_dataloader, x_unseen = x_unseen)
 
 # Define the neural network architecture and hyperparameters

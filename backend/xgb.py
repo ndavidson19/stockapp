@@ -5,7 +5,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-
 class XGBOOST():
     def __init__(self, config):
         self.model = xgb.XGBRegressor(
@@ -18,15 +17,17 @@ class XGBOOST():
             )
     
     def fit(self, X_train, y_train, X_val, y_val):
-        self.model.fit(np.vstack(X_train), np.vstack(y_train), eval_set = [np.vstack(X_val), np.vstack(y_val)], eval_metric = "mae", early_stopping_rounds = 50, verbose = False)
+        xgb = self.model.fit(np.vstack(X_train), np.vstack(y_train), eval_set = [(np.vstack(X_val), np.vstack(y_val))], eval_metric = "mae", early_stopping_rounds = 50, verbose = False)
         print("XGBoost Model Trained")
-        self.model.predict(X_train)
-        self.model.predict(X_val)
+        xgb.evals_result()
+        xgb.predict(X_train)
+        xgb.predict(X_val)
         print("XGBoost Model Predicted")
         print("XGBoost Model Training Error: ", mean_absolute_error(y_train, self.model.predict(X_train)))
         print("XGBoost Model Validation Error: ", mean_absolute_error(y_val, self.model.predict(X_val)))
         print("XGBoost Model Training Error: ", mean_squared_error(y_train, self.model.predict(X_train)))
         print("XGBoost Model Validation Error: ", mean_squared_error(y_val, self.model.predict(X_val)))
+
         plot_importance(self.model)
         plot_tree(self.model)
         plt.show()

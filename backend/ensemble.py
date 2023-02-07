@@ -19,13 +19,13 @@ class EnsembleModel:
     self.model6 = PolyReg()
     self.config = config
     
-  def fit(self, training_data, validation_data, training_data_1d):
+  def fit(self, training_data, validation_data, training_data_1d, validation_data_1d):
     # Train each individual model on the training data
 
 
     #self.ARIMA.fit(training_data_1d.x) # no y_train for ARIMA
-    self.LSTM.fit(model = self.LSTM, X_train = training_data.x, y_train = training_data.y, X_val=validation_data.x, y_val = validation_data.y)
-    self.XGB.fit(training_data.x, training_data.y, validation_data.x, validation_data.y)
+    #self.LSTM.fit(model = self.LSTM, X_train = training_data.x, y_train = training_data.y, X_val=validation_data.x, y_val = validation_data.y)
+    self.XGB.fit(X_train  = training_data_1d.x, y_train = training_data_1d.y, X_val = validation_data_1d.x, y_val = validation_data_1d.y)
     #self.model4.fit(training_data.x, training_data.y)
     self.FOURIER.fit(training_data_1d.x, training_data_1d.y)
     self.model6.fit(training_data_1d.x, training_data_1d.y)
