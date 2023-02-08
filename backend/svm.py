@@ -12,20 +12,18 @@ class SVM:
         self.C = C
         self.w = 0
         self.b = 0
+        self.kernel = "linear"
 
-    def transform_poly(self, X, Y=None):
-        # Finding the Square of X1, X2
-            X['x1^2'] = X['x1'] ** 2
-            X['x2^2'] = X['x2'] ** 2
-            # Finding the product of X1 and X2
-            X['x1 * x2'] = X['x1'] * X['x2']
-            # Converting dataset to numpy array
-            X = X.to_numpy()
-            if Y.size != 0:
-                Y = Y.to_numpy()
-                return X, Y
-            else:
-                return X
+    def transform_poly(self, X, Y):
+        '''
+        Performes polynomial transformation on the 1d array
+        '''
+        X = np.array([X**i for i in range(1, 4)]).reshape(-1, 3)
+        return X, Y
+
+
+
+
 
     # Hinge Loss Function / Calculation
     def hingeloss(self, w, b, x, y):
@@ -42,11 +40,11 @@ class SVM:
 
     def fit(self, X, Y, batch_size=100, learning_rate=0.001, epochs=1000):
         if(self.kernel == "poly"):
-            print("SVM(kernel='poly')")
+            print("Fitting SVM(kernel='poly') ...")
             X, Y = self.transform_poly(X, Y)
         else:
-            X = X.to_numpy()
-            Y = Y.to_numpy()
+            print('Fit SVM(kernel="linear") ...')
+
 
         # The number of features in X
         number_of_features = X.shape[1]
@@ -99,20 +97,23 @@ class SVM:
                 # Updating weights and bias
                 w = w - learning_rate * w + learning_rate * gradw
                 b = b + learning_rate * gradb
-        
         self.w = w
         self.b = b
-
+        print("w: ", self.w)
+        print("b: ", self.b)
+        print("losses: ", losses)
         return self.w, self.b, losses
 
-    def predict(self, X):
+    def predict(self, x_test, y_test):
         
         if(self.kernel == "poly"):
-            X = self.transform_poly(X, np.array([]))
+            X = self.transform_poly(x_test, y_test)
         else:
-            X.to_numpy()
-        linear_prediction = np.dot(X, self.w[0]) + self.b
-        return np.sign(linear_prediction)
+            pass
+        
+        linear_prediction = np.dot(X, self.w.T) + self.b
+        accuracy = np.mean(np.sign(linear_prediction) == y_test)
+        return np.sign(linear_prediction), accuracy
 
 
 
