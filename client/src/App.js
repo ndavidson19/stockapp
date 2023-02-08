@@ -16,7 +16,7 @@ import AnimatedNavbar from "./components/AnimatedNavbar";
 function App() {
   const [darkMode, setDarkMode] = useState(false);
   const [stockSymbol, setStockSymbol] = useState("SPY");
-  const [loggedIn, setLoggedIn] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(true);
   const cardsRef = useRef(null);
 
   const scrollToCards = () => {
