@@ -21,6 +21,7 @@
     "react-flip-toolkit": "^7.0.17",
     "react-icons": "^4.7.1",
     "react-lottie": "^1.2.3",
+    "react-router-dom": "^6.8.1",
     "react-scripts": "5.0.1",
     "react-typed": "^1.2.0",
     "recharts": "^2.2.0",

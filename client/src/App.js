@@ -10,8 +10,9 @@ import Newsletter from "./components/Newsletter";
 import StockContext from "./context/StockContext";
 import ThemeContext from "./context/ThemeContext";
 import AnimatedNavbar from "./components/AnimatedNavbar";
-
-
+import SignIn from "./components/SignIn";
+import { BrowserRouter, Route, useNavigate, Routes,  } from "react-router-dom";
+import LandingPage from "./components/LandingPage";
 
 function App() {
   const [darkMode, setDarkMode] = useState(false);
@@ -31,15 +32,13 @@ function App() {
 
     if (loggedIn) {
       return(
-      <div>
-        <AnimatedNavbar duration={ 300 } />
-        <Hero refs={cardsRef} scrollToCards = {scrollToCards}/>
-        <Analytics />
-        <Algorithm />
-        <Cards ref = {cardsRef}/>
-        <Newsletter />
-      </div>
-
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<LandingPage/>}> 
+              <Route path="/signin" element={<SignIn/>}/>
+            </Route>
+          </Routes>
+        </BrowserRouter>
       )
     }
     else {

@@ -15,7 +15,7 @@ const Hero = (props) => {
     <div className='text-black ml-52 flex'>
       <div className='max-w-[900px] mt-[-50px] w-full h-screen ml-5 text-left flex flex-col justify-center text-opacity-80'>
         <h1 className='md:text-8xl sm:text-7xl text-4xl flex font-bold md:py-2 mix-blend-overlay'>
-          Trade with AI.
+            Trade with AI.
         </h1>
         <h1 className='md:text-6xl sm:text-5xl text-4xl flex font-bold mix-blend-overlay'>
           Built by 
@@ -28,6 +28,7 @@ const Hero = (props) => {
             loop
           />
         </h1>
+        
 
         <h1 className='md:text-4xl sm:text-3xl text-2xl flex font-bold md:py-2 mix-blend-overlay'>
           Easy for You
