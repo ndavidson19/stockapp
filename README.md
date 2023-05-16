@@ -1,5 +1,13 @@
 # Quanta
 
+### This iteration is now deprecated.
+### After investigating many different paths I have decided on a working architecture moving forward and will be rewriting the codebase as such
+### The new application will live on an www.github.com/ndavidson19/quanta/ 
+### This application had many successes but ultimately was not sufficient for the scale I wanted it to be.
+### We will be migrating the front-end to use TypeScript and Sass rather than JavaScript and tailwindcss
+### We will also be using Next.js as our framework
+### The core software will be split into different microservices with the addition of Apache Kafka and Spark
+
 [![npm version][npm-badge]][npm-url]
 [![npm downloads][downloads-badge]][npm-url]
 [![npm bundle size][size-badge]][npm-url]
